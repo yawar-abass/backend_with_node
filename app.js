@@ -1,22 +1,25 @@
-const path = require("path");
-const express = require("express");
-const { routes } = require("./routes/admin");
-const shopRoute = require("./routes/shop");
-const { get404 } = require("./controllers/error");
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+import express from "express";
+import pkg from "body-parser";
 
 const app = express();
+const { urlencoded } = pkg;
+import { get404 } from "./controllers/error.js";
+import adminRoutes from "./routes/admin.js";
+import shopRoutes from "./routes/shop.js";
 
-// setting up the template engine
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+app.use(urlencoded({ extended: false }));
+app.use(express.static(join(__dirname, "public")));
 app.set("view engine", "ejs");
-app.set("views", "./views");
+app.set("views", "views");
 
-const bodyParser = require("body-parser");
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use("/admin", routes);
-app.use(shopRoute);
+app.use("/admin", adminRoutes);
+app.use(shopRoutes);
 
 app.use(get404);
 

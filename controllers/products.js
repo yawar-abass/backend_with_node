@@ -1,21 +1,21 @@
-const Product = require("../models/product");
+import Product, { fetchAll } from "../models/product.js";
 
-exports.getAddProduct = (req, res, next) => {
+export function getAddProduct(req, res, next) {
   res.render("add-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
   });
-};
+}
 
-exports.postAddProduct = (req, res, next) => {
+export function postAddProduct(req, res, next) {
   const product = new Product(req.body.title);
   product.save();
   console.log(product);
   res.redirect("/");
-};
+}
 
-exports.getProducts = (req, res, next) => {
-  Product.fetchAll((products) => {
+export function getProducts(req, res, next) {
+  fetchAll((products) => {
     res.render("shop", {
       prods: products,
       pageTitle: "Shop with us",
@@ -23,4 +23,4 @@ exports.getProducts = (req, res, next) => {
       path: "/",
     });
   });
-};
+}
