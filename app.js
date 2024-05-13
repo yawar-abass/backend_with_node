@@ -5,6 +5,7 @@ import express from "express";
 import pkg from "body-parser";
 import "dotenv/config";
 
+import sequelize from "./utils/database.js";
 import { get404 } from "./controllers/error.js";
 import adminRoutes from "./routes/admin.js";
 import shopRoutes from "./routes/shop.js";
@@ -25,4 +26,10 @@ app.use(shopRoutes);
 
 app.use(get404);
 
-app.listen(3000);
+sequelize
+  .sync()
+  .then(() => {
+    console.log("Connected to the database");
+    app.listen(3000);
+  })
+  .catch((err) => console.log(err));
