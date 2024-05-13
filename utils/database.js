@@ -1,10 +1,11 @@
 import mysql from "mysql2";
+import { Sequelize } from "sequelize";
 
-const pool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  database: "learn-backend",
-  password: process.env.DB_PASSWORD,
-});
+const sequelize = new Sequelize(
+  "learn-backend",
+  "root",
+  process.env.DB_PASSWORD,
+  { dialect: "mysql", host: "localhost" }
+);
 
-export default pool.promise();
+export default sequelize;
