@@ -1,18 +1,4 @@
-import { readFile, writeFile } from "fs";
-import { join } from "path";
-import { ROOT_DIR } from "../utils/path.js";
-
-const p = join(ROOT_DIR, "data", "products.json");
-
-const getProductsFromFile = (cb) => {
-  readFile(p, (err, fileContent) => {
-    if (err) {
-      cb([]);
-    } else {
-      cb(JSON.parse(fileContent));
-    }
-  });
-};
+import db from "../utils/database.js";
 
 export default class Product {
   constructor(title, imageUrl, description, price) {
@@ -23,23 +9,17 @@ export default class Product {
   }
 
   save() {
-    this.id = Math.random().toString();
-    getProductsFromFile((products) => {
-      products.push(this);
-      writeFile(p, JSON.stringify(products), (err) => {
-        console.log(err);
-      });
-    });
+    return db.execute(
+      "INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)",
+      [this.title, this.price, this.description, this.imageUrl]
+    );
   }
 
-  static fetchAll(cb) {
-    getProductsFromFile(cb);
+  static fetchAll() {
+    return db.execute("SELECT * FROM products");
   }
 
-  static findById(id, cb) {
-    getProductsFromFile((products) => {
-      const product = products.find((p) => p.id === id);
-      cb(product);
-    });
+  static findById(id) {
+    return db.execute("SELECT * FROM products WHERE products.id = ?", [id]);
   }
 }
