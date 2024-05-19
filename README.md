@@ -1,29 +1,37 @@
-## MySQL Documentation
+## Learn Sequelize
 
-MySQL is an open-source relational database management system (RDBMS) that is widely used in web development. It provides a robust and scalable solution for storing and retrieving data.
+Sequelize is a promise-based Node.js ORM tool for Postgres, MySQL, MariaDB, SQLite, Microsoft SQL Server, Oracle Database, Amazon Redshift and Snowflake’s Data Cloud. It features solid transaction support, relations, eager and lazy loading, read replication and more.
 
-**Installation**: To get started with MySQL, you need to install it on your system. You can download the MySQL Community Server from the official website and follow the installation instructions for your operating system.
+**Installation**:
 
-**Database Creation**: Once MySQL is installed, you can create databases to store your data. You can use the MySQL command-line client or a graphical user interface (GUI) tool like MySQL Workbench to create databases, tables, and manage data.
+```
+npm install --save sequelize
+```
 
-**SQL Queries**: MySQL uses the Structured Query Language (SQL) for interacting with the database. You can write SQL queries to perform various operations such as creating tables, inserting data, updating records, and retrieving data.
+**Database Creation**: To connect to the database, you must create a Sequelize instance. This can be done by either passing the connection parameters separately to the Sequelize constructor or by passing a single connection URI:
 
-**Data Manipulation**: MySQL provides a wide range of functions and operators for manipulating data. You can use SQL statements like SELECT, INSERT, UPDATE, and DELETE to perform data manipulation operations.
+```javascript
+const { Sequelize } = require('sequelize');
 
-**Data Modeling**: When designing a database, you need to define the structure of your data using tables, columns, and relationships. MySQL supports various data types and constraints to ensure data integrity and enforce business rules.
+// Option 1: Passing a connection URI
+const sequelize = new Sequelize('sqlite::memory:') // Example for sqlite
+const sequelize = new Sequelize('postgres://user:pass@example.com:5432/dbname') // Example for postgres
 
-**Performance Optimization**: As your database grows, you may need to optimize its performance. MySQL offers features like indexing, query optimization, and caching to improve the speed and efficiency of your queries.
+// Option 2: Passing parameters separately (sqlite)
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: 'path/to/database.sqlite'
+});
 
-**Security**: MySQL provides built-in security features to protect your data. You can create users, assign privileges, and implement access control mechanisms to ensure that only authorized users can access and modify the data.
-
-By referring to the MySQL documentation, you can learn more about the features and capabilities of MySQL and become proficient in using it for your web development projects.
-
-## MySQL Node.js
-
-Install this package to connect to MySQL database from Node.js
+// Option 3: Passing parameters separately (other dialects)
+const sequelize = new Sequelize('database', 'username', 'password', {
+  host: 'localhost',
+  dialect: /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */
+});
 
 ```
 
-npm install mysql2
+Most of the methods provided by Sequelize are asynchronous and therefore return Promises. They are all Promises, so you can use the Promise API (for example, using then, catch, finally) out of the box.
+Of course, using async and await works fine as well.
 
-```
+To learn more about Sequelize, visit the [official documentation](https://sequelize.org/master/).
