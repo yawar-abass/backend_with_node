@@ -1,6 +1,6 @@
 # MongoDB Basics
 
-> _Click &#9733; if you like the project. Your contributions are heartily ♡ welcome._
+> \_Click &#9733; if you like the project.
 
 <br/>
 
