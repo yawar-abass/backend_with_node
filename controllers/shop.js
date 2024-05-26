@@ -1,7 +1,8 @@
-import Product from "../models/product.js";
+import { Order } from "../models/order.js";
+import { Product } from "../models/product.js";
 
 export function getProducts(req, res, next) {
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
@@ -26,7 +27,7 @@ export function getProduct(req, res, next) {
 }
 
 export function getIndex(req, res, next) {
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       res.render("shop/index", {
         prods: products,
@@ -39,8 +40,10 @@ export function getIndex(req, res, next) {
 
 export function getCart(req, res, next) {
   req.user
-    .getCart()
-    .then((products) => {
+    .populate("cart.items.productId")
+
+    .then((user) => {
+      const products = user.cart.items;
       res.render("shop/cart", {
         path: "/cart",
         pageTitle: "Your Cart",
@@ -57,14 +60,15 @@ export function postCart(req, res, next) {
       return req.user.addToCart(product);
     })
     .then(() => {
-      res.redirect("/cart");
-    });
+      return res.redirect("/cart");
+    })
+    .catch((err) => console.log(err));
 }
 
 export function postCartDeleteProduct(req, res, next) {
   const prodId = req.body.productId;
   req.user
-    .deleteItemsFromCart(prodId)
+    .removeFromCart(prodId)
     .then(() => {
       res.redirect("/cart");
     })
@@ -86,7 +90,23 @@ export function getOrders(req, res, next) {
 
 export function postOrder(req, res, next) {
   req.user
-    .addOrder()
+    .populate("cart.items.productId")
+    .then((user) => {
+      const products = user.cart.items.map((i) => {
+        return { quantity: i.quantity, product: { ...i.productId._doc } };
+      });
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+        products: products,
+      });
+      return order.save();
+    })
+    .then(() => {
+      return req.user.clearCart();
+    })
     .then(() => {
       res.redirect("/orders");
     })

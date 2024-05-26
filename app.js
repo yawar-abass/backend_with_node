@@ -8,8 +8,8 @@ import "dotenv/config";
 import { get404 } from "./controllers/error.js";
 import adminRoutes from "./routes/admin.js";
 import shopRoutes from "./routes/shop.js";
-import { connectToDatabase } from "./utils/database.js";
-import User from "./models/user.js";
+
+import { User } from "./models/user.js";
 import mongoose from "mongoose";
 
 const app = express();
@@ -24,9 +24,9 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 
 app.use((req, res, next) => {
-  User.findById("66507de073682d529f483246")
+  User.findById("6651ceae9bf9c1fb84e859a8")
     .then((user) => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user;
       next();
     })
     .catch((err) => {
@@ -42,6 +42,19 @@ app.use(get404);
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: "Max",
+          email: "hello@hl.com",
+          cart: {
+            items: [],
+          },
+        });
+        user.save();
+      }
+    });
+
     console.log("Connected to MongoDB");
     app.listen(3000);
   })
