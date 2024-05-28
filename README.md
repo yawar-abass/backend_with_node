@@ -1,47 +1,23 @@
-## What is Mongoose?
+## Cookies
 
-It is an Object Document Mapper (ODM) that allows you to define schemas for your documents which are then mapped to MongoDB collections. It provides you with a straight-forward, schema-based solution to model your application data.
+Cookies are small pieces of data that are stored on the user's computer by the web browser. They are commonly used to store user preferences, session information, and other data that can be accessed by the server.
 
-## What is a Schema?
+### Creating Cookies
 
-A schema is a blueprint for defining the structure of your documents. It defines the shape of your documents, the default values, validators, etc. It is a way to enforce the structure of your documents.
+To create a cookie in Node.js, you can use the `set-cookie` header in the HTTP response. Here's an example:
 
-```javascript
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  age: {
-    type: Number,
-    required: true,
-  },
-});
-```
+```js
+const http = require("http");
 
-## What is a Model?
+http
+  .createServer((req, res) => {
+    // Set the cookie
+    res.setHeader("Set-Cookie", "username=JohnDoe");
 
-A model is a class that is built on top of a schema. It is a wrapper around the schema that provides you with an interface to interact with the database. It allows you to create, read, update, and delete documents in the database.
-eg:
-
-```javascript
-const User = mongoose.model("User", userSchema);
-```
-
-## Instances
-
-Instances are individual documents that are created using a model. They represent a single document in the database.
-e.g:
-
-```javascript
-const user = new User({ name: "John Doe", age: 25 });
-```
-
-## Queries
-
-Queries are used to interact with the database. You can use queries to find, update, delete, and create documents in the database.
-e.g:
-
-```javascript
-const users = await User.find({ age: { $gt: 18 } });
+    // Send response
+    res.end("Cookie created");
+  })
+  .listen(3000, () => {
+    console.log("Server running on port 3000");
+  });
 ```

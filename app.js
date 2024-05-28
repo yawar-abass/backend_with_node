@@ -8,6 +8,7 @@ import "dotenv/config";
 import { get404 } from "./controllers/error.js";
 import adminRoutes from "./routes/admin.js";
 import shopRoutes from "./routes/shop.js";
+import authRoutes from "./routes/auth.js";
 
 import { User } from "./models/user.js";
 import mongoose from "mongoose";
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(get404);
 
