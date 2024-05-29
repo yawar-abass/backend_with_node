@@ -9,11 +9,19 @@ import { get404 } from "./controllers/error.js";
 import adminRoutes from "./routes/admin.js";
 import shopRoutes from "./routes/shop.js";
 import authRoutes from "./routes/auth.js";
+import session from "express-session";
+import connectMongoDbSession from "connect-mongodb-session";
 
 import { User } from "./models/user.js";
 import mongoose from "mongoose";
 
 const app = express();
+const MongoDbStore = connectMongoDbSession(session);
+
+const store = new MongoDbStore({
+  uri: process.env.MONGODB_URI,
+  collection: "sessions",
+});
 const { urlencoded } = pkg;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,8 +32,20 @@ app.use(express.static(join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", "views");
 
+app.use(
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
+);
+
 app.use((req, res, next) => {
-  User.findById("6651ceae9bf9c1fb84e859a8")
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
