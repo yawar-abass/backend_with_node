@@ -64,19 +64,6 @@ app.use(get404);
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "Max",
-          email: "hello@hl.com",
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-    });
-
     console.log("Connected to MongoDB");
     app.listen(3000);
   })

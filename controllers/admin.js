@@ -8,7 +8,8 @@ export function getAddProduct(req, res, next) {
     formsCSS: true,
     productCSS: true,
     activeAddProduct: true,
-    isAuthenticated: req.isLoggedIn,
+    editing: false,
+    isAuthenticated: req.session.isLoggedIn,
   });
 }
 
@@ -28,7 +29,7 @@ export function getEditProduct(req, res, next) {
         path: "/admin/edit-product",
         editing: editMode,
         product: product,
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -78,7 +79,7 @@ export function getProducts(req, res, next) {
         prods: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
