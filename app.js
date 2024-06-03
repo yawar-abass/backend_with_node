@@ -4,16 +4,17 @@ import { fileURLToPath } from "url";
 import express from "express";
 import pkg from "body-parser";
 import "dotenv/config";
+import session from "express-session";
+import connectMongoDbSession from "connect-mongodb-session";
+import mongoose from "mongoose";
+import tokens from "csrf";
 
 import { get404 } from "./controllers/error.js";
 import adminRoutes from "./routes/admin.js";
 import shopRoutes from "./routes/shop.js";
 import authRoutes from "./routes/auth.js";
-import session from "express-session";
-import connectMongoDbSession from "connect-mongodb-session";
 
 import { User } from "./models/user.js";
-import mongoose from "mongoose";
 
 const app = express();
 const MongoDbStore = connectMongoDbSession(session);
@@ -22,6 +23,7 @@ const store = new MongoDbStore({
   uri: process.env.MONGODB_URI,
   collection: "sessions",
 });
+
 const { urlencoded } = pkg;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,6 +33,9 @@ app.use(urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", "views");
+
+const csrfProtection = new tokens();
+//app.use(csrfProtection);
 
 app.use(
   session({

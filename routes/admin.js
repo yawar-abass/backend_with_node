@@ -11,6 +11,7 @@ import {
   postEditProduct,
 } from "../controllers/admin.js";
 import { isAuth } from "../middleware/is-auth.js";
+import { body } from "express-validator";
 
 const router = Router();
 
@@ -21,7 +22,17 @@ router.get("/add-product", isAuth, getAddProduct);
 router.get("/products", isAuth, getProducts);
 
 // /admin/add-product => POST
-router.post("/add-product", isAuth, postAddProduct);
+router.post(
+  "/add-product",
+  [
+    body("title").isLength({ min: 3 }).trim(),
+    body("imageUrl").isURL(),
+    body("price").isFloat(),
+    body("description").isLength({ min: 5, max: 400 }).trim(),
+  ],
+  isAuth,
+  postAddProduct
+);
 
 router.get("/edit-product/:productId", getEditProduct);
 
