@@ -13,6 +13,12 @@ export function getAddProduct(req, res, next) {
     hasError: false,
     isAuthenticated: req.session.isLoggedIn,
     errorMessage: null,
+    product: {
+      title: "",
+      imageUrl: "",
+      price: "",
+      description: "",
+    },
   });
 }
 
@@ -41,13 +47,38 @@ export function getEditProduct(req, res, next) {
 }
 
 export function postEditProduct(req, res, next) {
-  const { prodId, title, imageUrl, price, description } = req.body;
+  const { prodId, title, price, description } = req.body;
+
+  const image = req.file;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: true,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description,
+        _id: prodId,
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array(),
+      isAuthenticated: req.session.isLoggedIn,
+    });
+  }
 
   Product.findById(prodId)
     .then((product) => {
       product.title = title;
       product.price = price;
-      product.imageUrl = imageUrl;
+      if (image) {
+        product.imageUrl = image.path;
+      }
+
       product.description = description;
       return product.save();
     })
@@ -59,7 +90,9 @@ export function postEditProduct(req, res, next) {
 }
 
 export function postAddProduct(req, res, next) {
-  const { title, imageUrl, price, description } = req.body;
+  const { title, price, description } = req.body;
+  const image = req.file;
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/add-product", {
@@ -69,7 +102,6 @@ export function postAddProduct(req, res, next) {
       hasError: true,
       product: {
         title: title,
-        imageUrl: imageUrl,
         price: price,
         description: description,
       },
@@ -78,6 +110,8 @@ export function postAddProduct(req, res, next) {
       isAuthenticated: req.session.isLoggedIn,
     });
   }
+
+  const imageUrl = image.path;
 
   const product = new Product({
     title,
@@ -92,7 +126,11 @@ export function postAddProduct(req, res, next) {
       console.log("Created Product");
       res.redirect("/admin/products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 }
 
 export function getProducts(req, res, next) {

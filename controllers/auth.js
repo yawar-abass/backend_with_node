@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { validationResult } from "express-validator";
 
 export const getLogin = (req, res, next) => {
-  // const isLoggedIn = req.get("Cookie").split(";")[6].trim().split("=")[1];
+  const isLoggedIn = req.get("Cookie").split(";")[6].trim().split("=")[1];
   console.log(req.session.isLoggedIn);
   res.render("auth/login", {
     path: "/login",

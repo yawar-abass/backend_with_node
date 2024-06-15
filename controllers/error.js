@@ -5,3 +5,11 @@ export function get404(req, res, next) {
     isAuthenticated: req.session.isLoggedIn,
   });
 }
+
+export function get500(req, res, next) {
+  res.status(500).render("404", {
+    pageTitle: "Internal Server Error",
+    path: "/500",
+    isAuthenticated: req.session.isLoggedIn,
+  });
+}

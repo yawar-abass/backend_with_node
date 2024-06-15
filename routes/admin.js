@@ -26,7 +26,7 @@ router.post(
   "/add-product",
   [
     body("title").isLength({ min: 3 }).trim(),
-    body("imageUrl").isURL(),
+
     body("price").isFloat(),
     body("description").isLength({ min: 5, max: 400 }).trim(),
   ],
@@ -34,9 +34,23 @@ router.post(
   postAddProduct
 );
 
-router.get("/edit-product/:productId", getEditProduct);
+router.get(
+  "/edit-product/:productId",
 
-router.post("/edit-product", isAuth, postEditProduct);
+  getEditProduct
+);
+
+router.post(
+  "/edit-product",
+  [
+    body("title").isLength({ min: 3 }).trim(),
+
+    body("price").isFloat(),
+    body("description").isLength({ min: 5, max: 400 }).trim(),
+  ],
+  isAuth,
+  postEditProduct
+);
 
 router.post("/delete-product", isAuth, deleteProduct);
 
